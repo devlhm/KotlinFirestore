@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">KotlinFirestore</string>
+    <string name="cep">CEP</string>
+    <string name="bairro">Bairro</string>
+    <string name="nome">Nome</string>
+    <string name="endereco">Endereço</string>
+    <string name="enviar">Enviar</string>
+</resources>

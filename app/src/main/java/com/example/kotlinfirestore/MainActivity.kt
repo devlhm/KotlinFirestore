@@ -24,19 +24,19 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         val name = findViewById<EditText>(R.id.editTextName).text.toString();
-        val adress = findViewById<EditText>(R.id.editTextAdress).text.toString();
+        val address = findViewById<EditText>(R.id.editTextAdress).text.toString();
         val district = findViewById<EditText>(R.id.editTextDistrict).text.toString();
         val cep = findViewById<EditText>(R.id.editTextCEP).text.toString();
 
         val db = Firebase.firestore;
 
-        if(!validateFields(arrayOf(name, adress, district, cep))) {
+        if(!validateFields(arrayOf(name, address, district, cep))) {
             return;
         }
 
         val person = hashMapOf(
             "name" to name,
-            "address" to adress,
+            "address" to address,
             "district" to district,
             "cep" to cep
         )

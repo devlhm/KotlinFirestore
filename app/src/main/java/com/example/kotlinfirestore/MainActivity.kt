@@ -9,6 +9,8 @@ import android.widget.EditText
 import android.widget.Toast
 import com.example.kotlinfirestore.db.DatabaseHandler
 import com.example.kotlinfirestore.model.Person
+import com.google.firebase.FirebaseApp
+import java.lang.IllegalStateException
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,10 +19,16 @@ class MainActivity : AppCompatActivity() {
 
         val submitButton = findViewById<Button>(R.id.registerSubmit);
         submitButton.setOnClickListener { onSubmitButtonClick() };
+
+
     }
 
     private fun onSubmitButtonClick() {
-        val dbHandler = DatabaseHandler(this);
+        try {
+            FirebaseApp.getInstance()
+        } catch (e: IllegalStateException) {
+            FirebaseApp.initializeApp(this)
+        }
 
         val nameET = findViewById<EditText>(R.id.editTextName);
         val addressET = findViewById<EditText>(R.id.editTextAdress);
@@ -28,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         val cepET = findViewById<EditText>(R.id.editTextCEP);
 
         if (!validateForm(nameET, addressET, districtET, cepET)) return
+
+        val dbHandler = DatabaseHandler(this);
 
         val person = Person(
             name = nameET.text.toString().trim(),

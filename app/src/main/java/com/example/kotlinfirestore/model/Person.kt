@@ -1,5 +1,8 @@
 package com.example.kotlinfirestore.model
 
+import androidx.annotation.NonNull
+import org.intellij.lang.annotations.Pattern
+
 data class Person(
     val id: String? = null,
     val name: String,

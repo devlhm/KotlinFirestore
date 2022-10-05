@@ -7,9 +7,8 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.example.kotlinfirestore.db.DatabaseHandler
+import com.example.kotlinfirestore.model.Person
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,44 +20,59 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onSubmitButtonClick() {
-        FirebaseApp.initializeApp(this)
+        val dbHandler = DatabaseHandler(this);
 
-        val name = findViewById<EditText>(R.id.editTextName).text.toString();
-        val address = findViewById<EditText>(R.id.editTextAdress).text.toString();
-        val district = findViewById<EditText>(R.id.editTextDistrict).text.toString();
-        val cep = findViewById<EditText>(R.id.editTextCEP).text.toString();
+        val nameET = findViewById<EditText>(R.id.editTextName);
+        val addressET = findViewById<EditText>(R.id.editTextAdress);
+        val districtET = findViewById<EditText>(R.id.editTextDistrict);
+        val cepET = findViewById<EditText>(R.id.editTextCEP);
 
-        val db = Firebase.firestore;
+        if (!validateForm(nameET, addressET, districtET, cepET)) return
 
-        if(!validateFields(arrayOf(name, address, district, cep))) {
-            return;
-        }
+        val person = Person(
+            name = nameET.text.toString().trim(),
+            address = addressET.text.toString().trim(),
+            district = districtET.text.toString().trim(),
+            cep = cepET.text.toString().trim()
+        );
 
-        val person = hashMapOf(
-            "name" to name,
-            "address" to address,
-            "district" to district,
-            "cep" to cep
-        )
+        val result = dbHandler.addPerson(person);
 
-        db.collection("people")
-            .add(person)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
+        if (result) Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
+        else Toast.makeText(this, "Erro no cadastro!", Toast.LENGTH_SHORT).show()
     }
 
-    public fun validateFields(fields: Array<String>): Boolean {
-        fields.forEach {
-            if(it == "") {
-                Toast.makeText(this, "Preencha todos os campos!", Toast.LENGTH_LONG);
-                return false;
-            }
+    private fun validateForm(
+        nameET: EditText,
+        addressET: EditText,
+        districtET: EditText,
+        cepET: EditText
+    ): Boolean {
+        if (nameET.text.trim().isNullOrEmpty()) {
+            nameET.setError("Esse campo é necessário")
+            return false
         }
 
-        return true;
+        if (addressET.text.trim().isNullOrEmpty()) {
+            addressET.setError("Esse campo é necessário")
+            return false
+        }
+
+        if (districtET.text.trim().isNullOrEmpty()) {
+            districtET.setError("Esse campo é necessário")
+            return false
+        }
+
+        if (cepET.text.trim().isNullOrEmpty()) {
+            cepET.setError("Esse campo é necessário")
+            return false
+        }
+
+        if (cepET.text.trim().matches(Regex("[0-9]{5}-[0-9]{3}"))) {
+            cepET.setError("CEP inválido")
+            return false
+        }
+
+        return true
     }
 }

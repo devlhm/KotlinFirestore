@@ -1,15 +1,14 @@
 package com.example.kotlinfirestore
 
-import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.example.kotlinfirestore.db.DatabaseHandler
 import com.example.kotlinfirestore.model.Person
 import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.DocumentReference
 import java.lang.IllegalStateException
 
 class MainActivity : AppCompatActivity() {
@@ -19,8 +18,6 @@ class MainActivity : AppCompatActivity() {
 
         val submitButton = findViewById<Button>(R.id.registerSubmit);
         submitButton.setOnClickListener { onSubmitButtonClick() };
-
-
     }
 
     private fun onSubmitButtonClick() {
@@ -46,10 +43,20 @@ class MainActivity : AppCompatActivity() {
             cep = cepET.text.toString().trim()
         );
 
-        val result = dbHandler.addPerson(person);
+        val submitButton = findViewById<Button>(R.id.registerSubmit)
+        Helpers.setBtnEnabled(submitButton, false)
 
-        if (result) Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
-        else Toast.makeText(this, "Erro no cadastro!", Toast.LENGTH_SHORT).show()
+        dbHandler.addPerson(person)
+            .addOnSuccessListener { onPersonAdded() }
+            .addOnFailureListener {
+                Toast.makeText(this, "Erro no cadastro!", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun onPersonAdded() {
+        val submitButton = findViewById<Button>(R.id.registerSubmit)
+        Helpers.setBtnEnabled(submitButton, true)
+        Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
     }
 
     private fun validateForm(
@@ -78,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             return false
         }
 
-        if (cepET.text.trim().matches(Regex("[0-9]{5}-[0-9]{3}"))) {
+        if (!Regex("[0-9]{5}-[0-9]{3}").containsMatchIn(cepET.text.trim())) {
             cepET.setError("CEP inválido")
             return false
         }

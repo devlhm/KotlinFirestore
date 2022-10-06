@@ -2,8 +2,10 @@ package com.example.kotlinfirestore.db
 
 import android.content.Context
 import com.example.kotlinfirestore.model.Person
+import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
@@ -23,9 +25,8 @@ class DatabaseHandler(context: Context) {
         this.db = Firebase.firestore
     }
 
-    fun addPerson(person: Person): Boolean {
-        val result = await(db.collection(PERSON_COLLEC_PATH).add(person))
-        return result.id != "";
+    fun addPerson(person: Person): Task<DocumentReference> {
+        return db.collection(PERSON_COLLEC_PATH).add(person)
     }
 
     fun getPerson(id: String): Person? {

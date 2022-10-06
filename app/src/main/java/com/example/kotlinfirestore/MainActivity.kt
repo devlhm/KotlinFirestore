@@ -10,6 +10,8 @@ import com.example.kotlinfirestore.model.Person
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.DocumentReference
 import java.lang.IllegalStateException
+import java.util.logging.Level
+import java.util.logging.Logger
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

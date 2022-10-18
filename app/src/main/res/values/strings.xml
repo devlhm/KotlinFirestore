@@ -5,4 +5,5 @@
     <string name="nome">Nome</string>
     <string name="endereco">Endereço</string>
     <string name="enviar">Enviar</string>
+    <string name="x">X</string>
 </resources>

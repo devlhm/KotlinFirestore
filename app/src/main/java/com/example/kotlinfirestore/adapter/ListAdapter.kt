@@ -12,7 +12,7 @@ import com.example.kotlinfirestore.db.DatabaseHandler
 import com.example.kotlinfirestore.model.Person
 
 class ListAdapter (peopleList: List<Person>, internal var ctx: Context, private val callbacks: (Int) -> Unit): RecyclerView.Adapter<ListAdapter.ViewHolder>(){
-    internal var peopleList: List<Person> = ArrayList<Person>()
+    internal var peopleList: List<Person> = ArrayList()
 
     init {
         this.peopleList = peopleList
@@ -29,7 +29,7 @@ class ListAdapter (peopleList: List<Person>, internal var ctx: Context, private 
         holder.name.text = person.name
         holder.btn.setOnClickListener {
             val dbHandler = DatabaseHandler(ctx)
-            dbHandler.deletePerson("a")
+            dbHandler.deletePerson(person.id!!)
             callbacks(position)
         }
     }
@@ -38,8 +38,10 @@ class ListAdapter (peopleList: List<Person>, internal var ctx: Context, private 
         return peopleList.size
     }
 
+
+
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        var name: TextView = view.tvAdpNome
-        var btn: Button = view.btnAdpDel
+        var name: TextView = view.findViewById(R.id.tvAdpName)
+        var btn: Button = view.findViewById(R.id.btnAdpDel)
     }
 }

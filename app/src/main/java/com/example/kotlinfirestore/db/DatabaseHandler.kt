@@ -27,8 +27,8 @@ class DatabaseHandler(context: Context) {
         this.db = Firebase.firestore
     }
 
-    fun addPerson(person: Person): Task<DocumentReference> {
-        return db.collection(PERSON_COLLEC_PATH).add(person)
+    fun addPerson(person: Person): Task<Void> {
+        return db.collection(PERSON_COLLEC_PATH).document().set(person)
     }
 
     fun getPerson(id: String): Task<DocumentSnapshot> {

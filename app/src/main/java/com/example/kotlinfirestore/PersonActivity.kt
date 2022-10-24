@@ -17,7 +17,7 @@ class PersonActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_person)
 
-        val submitButton = findViewById<Button>(R.id.registerCancel);
+        val submitButton = findViewById<Button>(R.id.registerSubmit);
         submitButton.setOnClickListener { onSubmitButtonClick() };
     }
 
@@ -42,13 +42,12 @@ class PersonActivity : AppCompatActivity() {
             cep = cepET.text.toString().trim()
         );
 
-        val submitButton = findViewById<Button>(R.id.registerCancel)
+        val submitButton = findViewById<Button>(R.id.registerSubmit)
         Helpers.setBtnEnabled(submitButton, false)
 
         dbHandler.addPerson(person)
             .addOnSuccessListener {
                 onPersonAdded()
-                finish()
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Erro no cadastro!", Toast.LENGTH_SHORT).show()
@@ -56,9 +55,10 @@ class PersonActivity : AppCompatActivity() {
     }
 
     private fun onPersonAdded() {
-        val submitButton = findViewById<Button>(R.id.registerCancel)
+        val submitButton = findViewById<Button>(R.id.registerSubmit)
         Helpers.setBtnEnabled(submitButton, true)
         Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun validateForm(

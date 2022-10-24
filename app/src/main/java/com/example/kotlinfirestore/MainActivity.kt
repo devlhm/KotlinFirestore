@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.kotlinfirestore.adapter.ListAdapter
 import com.example.kotlinfirestore.db.DatabaseHandler
 import com.example.kotlinfirestore.model.Person
@@ -40,9 +41,20 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         dbHandler.getPeople().addOnSuccessListener { result ->
             for (documentSnapshot in result) {
-                val person = documentSnapshot.toObject<Person>()
+                val person = documentSnapshot.toObject(Person::class.java)
                 personList.add(person)
             }
         }
+
+        listAdapter = ListAdapter(personList, this, this::deleteAdapter)
+        linearLayoutManager = LinearLayoutManager(this)
+        var personList = findViewById<RecyclerView>(R.id.person_list)
+        personList.layoutManager = linearLayoutManager
+        personList.adapter = listAdapter
+    }
+
+    private fun deleteAdapter(position: Int) {
+        personList.removeAt(position)
+        listAdapter!!.notifyItemRemoved(position)
     }
 }

@@ -6,7 +6,9 @@ import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
@@ -29,10 +31,16 @@ class DatabaseHandler(context: Context) {
         return db.collection(PERSON_COLLEC_PATH).add(person)
     }
 
-    fun getPerson(id: String): Person? {
-        val doc = await(db.collection(PERSON_COLLEC_PATH).document(id).get())
+    fun getPerson(id: String): Task<DocumentSnapshot> {
+        return db.collection(PERSON_COLLEC_PATH).document(id).get()
+    }
 
-        return if(doc.exists()) doc.toObject<Person>()!! else null
+    fun getPeople(): Task<QuerySnapshot> {
+        return db.collection(PERSON_COLLEC_PATH).get()
+    }
+
+    fun deletePerson(id: String): Task<Void> {
+        return db.collection(PERSON_COLLEC_PATH).document(id).delete()
     }
 
     companion object {

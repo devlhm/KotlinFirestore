@@ -6,4 +6,5 @@
     <string name="endereco">Endereço</string>
     <string name="enviar">Enviar</string>
     <string name="x">X</string>
+    <string name="cancelar">cancelar</string>
 </resources>

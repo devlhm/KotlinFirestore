@@ -1,9 +1,14 @@
 package com.example.kotlinfirestore.adapter
 
 import android.content.Context
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kotlinfirestore.R
+import com.example.kotlinfirestore.db.DatabaseHandler
 import com.example.kotlinfirestore.model.Person
 
 class ListAdapter (peopleList: List<Person>, internal var ctx: Context, private val callbacks: (Int) -> Unit): RecyclerView.Adapter<ListAdapter.ViewHolder>(){
@@ -13,19 +18,28 @@ class ListAdapter (peopleList: List<Person>, internal var ctx: Context, private 
         this.peopleList = peopleList
     }
 
-    inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        TODO("Not yet implemented")
+        val view = LayoutInflater.from(ctx).inflate(R.layout.list_item, parent, false)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        val person = peopleList[position]
+
+        holder.name.text = person.name
+        holder.btn.setOnClickListener {
+            val dbHandler = DatabaseHandler(ctx)
+            dbHandler.deletePerson("a")
+            callbacks(position)
+        }
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return peopleList.size
+    }
+
+    inner class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        var name: TextView = view.tvAdpNome
+        var btn: Button = view.btnAdpDel
     }
 }

@@ -13,12 +13,44 @@ import java.lang.IllegalStateException
 class PersonActivity : AppCompatActivity() {
     private val dbHandler = DatabaseHandler(this)
 
+    var nameET : EditText? = null
+    var addressET : EditText? = null
+    var districtET : EditText? = null
+    var cepET : EditText? = null
+
+    var personId: String? = null
+
+    var edit : Boolean? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_person)
 
-        val submitButton = findViewById<Button>(R.id.registerSubmit);
-        submitButton.setOnClickListener { onSubmitButtonClick() };
+        nameET = findViewById<EditText>(R.id.editTextName);
+        addressET = findViewById<EditText>(R.id.editTextAdress);
+        districtET = findViewById<EditText>(R.id.editTextDistrict);
+        cepET = findViewById<EditText>(R.id.editTextCEP);
+
+        edit = intent.getBooleanExtra("edit", false)
+
+        if(edit as Boolean) {
+            val person = intent.getSerializableExtra("person") as Person
+            personId = person.id
+            fillForm(person.name, person.address, person.district, person.cep)
+        }
+
+        val submitButton = findViewById<Button>(R.id.registerSubmit)
+        submitButton.setOnClickListener { onSubmitButtonClick() }
+
+        val cancelButton = findViewById<Button>(R.id.registerCancel)
+        cancelButton.setOnClickListener { finish() }
+    }
+
+    private fun fillForm(name: String, address: String, district: String, cep: String) {
+        nameET!!.setText(name)
+        addressET!!.setText(address)
+        districtET!!.setText(district)
+        cepET!!.setText(cep)
     }
 
     private fun onSubmitButtonClick() {
@@ -28,36 +60,41 @@ class PersonActivity : AppCompatActivity() {
             FirebaseApp.initializeApp(this)
         }
 
-        val nameET = findViewById<EditText>(R.id.editTextName);
-        val addressET = findViewById<EditText>(R.id.editTextAdress);
-        val districtET = findViewById<EditText>(R.id.editTextDistrict);
-        val cepET = findViewById<EditText>(R.id.editTextCEP);
-
-        if (!validateForm(nameET, addressET, districtET, cepET)) return
+        if (!validateForm(nameET!!, addressET!!, districtET!!, cepET!!)) return
 
         val person = Person(
-            name = nameET.text.toString().trim(),
-            address = addressET.text.toString().trim(),
-            district = districtET.text.toString().trim(),
-            cep = cepET.text.toString().trim()
+            name = nameET!!.text.toString().trim(),
+            address = addressET!!.text.toString().trim(),
+            district = districtET!!.text.toString().trim(),
+            cep = cepET!!.text.toString().trim()
         );
 
         val submitButton = findViewById<Button>(R.id.registerSubmit)
         Helpers.setBtnEnabled(submitButton, false)
 
-        dbHandler.addPerson(person)
-            .addOnSuccessListener {
-                onPersonAdded()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Erro no cadastro!", Toast.LENGTH_SHORT).show()
-            }
+        if(edit as Boolean) {
+            dbHandler.updatePerson(personId!!, person)
+                .addOnSuccessListener {
+                    onPersonAdded()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Erro na edição!", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            dbHandler.addPerson(person)
+                .addOnSuccessListener {
+                    onPersonAdded()
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Erro no cadastro!", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
     private fun onPersonAdded() {
         val submitButton = findViewById<Button>(R.id.registerSubmit)
         Helpers.setBtnEnabled(submitButton, true)
-        Toast.makeText(this, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Inserção realizada com sucesso!", Toast.LENGTH_SHORT).show()
         finish()
     }
 

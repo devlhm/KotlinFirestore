@@ -11,4 +11,4 @@ data class Person(
     val address: String = "",
     val district: String = "",
     val cep: String = ""
-)
+): java.io.Serializable

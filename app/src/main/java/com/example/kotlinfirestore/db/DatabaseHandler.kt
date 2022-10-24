@@ -43,6 +43,10 @@ class DatabaseHandler(context: Context) {
         return db.collection(PERSON_COLLEC_PATH).document(id).delete()
     }
 
+    fun updatePerson(id: String, data: Person): Task<Void> {
+        return db.collection(PERSON_COLLEC_PATH).document(id).set(data)
+    }
+
     companion object {
         private const val PERSON_COLLEC_PATH = "people"
     }
